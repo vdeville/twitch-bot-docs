@@ -1,0 +1,7 @@
+project_name: Twitch bot Documentation
+project_description: This is documentation for Twitch Bot project.
+project_url: https://mythevalentinus.github.io/twitch-bot
+
+default_language: en
+lunr_search: false
+default_order_alphabetical: false
