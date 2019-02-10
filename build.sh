@@ -4,7 +4,7 @@ BASE_DIR=$(pwd)
 
 echo "Remove old build"
 
-rm -rf ${BASE_DIR}/build/
+rm -rf ${BASE_DIR}/docs/
 
 echo "Going to src folder"
 
