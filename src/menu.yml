@@ -2,7 +2,7 @@
 language: en
 ---
 - title: '<i class="fa fa-home" aria-hidden="true"></i> Home'
-  link: '/en/index.html'
+  link: '/twitch-bot-docs/en/index.html'
   weight: 0
 
 - title: '<i class="fa fa-book" aria-hidden="true"></i> Documentation'
@@ -10,10 +10,10 @@ language: en
   weight: 1
   children:
     - title: '<i class="fa fa-code" aria-hidden="true"></i> Developper'
-      link: '/en/developpers/index.html'
+      link: '/twitch-bot-docs/en/developpers/index.html'
       weight: 0
     - title: '<i class="fa fa-user" aria-hidden="true"></i> User'
-      link: '/en/users/index.html'
+      link: '/twitch-bot-docs/en/users/index.html'
       weight: 1
 
 - title: '<i class="fa fa-github" aria-hidden="true"></i> Github'
