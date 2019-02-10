@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Developpers - Twitch bot Documentation</title>
+
+<meta name="description" content="This is documentation for Twitch Bot project."/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="SkyDocs v0.7.3 Beta"/>
+
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="Developpers - Twitch bot Documentation"/>
+<meta property="og:site_name" content="Twitch bot Documentation"/>
+<meta property="og:url" content="https://mythevalentinus.github.io/twitch-bot/en/developpers/index.html"/>
+<meta property="og:description" content="This is documentation for Twitch Bot project."/>
+<meta property="og:image" content="https://mythevalentinus.github.io/twitch-bot/assets/img/icon.png"/>
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Developpers - Twitch bot Documentation"/>
+<meta name="twitter:site" content="Twitch bot Documentation"/>
+<meta name="twitter:creator" content="@Skyost_"/>
+<meta name="twitter:url" content="https://mythevalentinus.github.io/twitch-bot/en/developpers/index.html"/>
+<meta name="twitter:description" content="This is documentation for Twitch Bot project."/>
+<meta name="twitter:image" content="https://mythevalentinus.github.io/twitch-bot/assets/img/icon.png"/>
+
+<meta id="theme-color" name="theme-color" content="#6541A5"/>
+<link rel="icon" type="image/png" href="../../assets/img/icon.png"/>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css"/>
+<link rel="stylesheet" type="text/css" href="../../assets/css/page.css"/>
+</head>
+<body>
+<header>
+<nav class="navbar navbar-expand-lg navbar-dark">
+<a class="navbar-brand" href="../../index.html"><img src="../../assets/img/icon.png" width="30" height="30" class="d-inline-block align-top" alt="Twitch bot Documentation"> Twitch bot Documentation</a>
+<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navbar">
+<ul>
+<li>
+<a href="/en/index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+</li>
+<li>
+<a href="#"><i class="fa fa-book" aria-hidden="true"></i> Documentation</a>
+<ul>
+<li>
+<a href="/en/developpers/index.html"><i class="fa fa-code" aria-hidden="true"></i> Developper</a>
+</li>
+<li>
+<a href="/en/users/index.html"><i class="fa fa-user" aria-hidden="true"></i> User</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="https://github.com/MyTheValentinus/twitch-bot" target="_blank"><i class="fa fa-github" aria-hidden="true"></i> Github</a>
+</li>
+</ul>
+</div>
+</nav>
+</header>
+<div id="content" class="container-fluid row">
+<div class="col-md-3 d-none d-md-block">
+<nav id="nav-toc"></nav>
+</div>
+<article class="col-md-7">
+<h1 id="understand-the-hook-system">Understand the hook system</h1>
+<p>Twitch-Bot comes with a lot of hooks. A hook is an easy method to launch specific portion of code when events or actions are summoned.</p>
+<p>For example, if you would like to send reply when bot is mentioned, you need to use the <code>onPing()</code> hook.</p>
+<p>List of all hooks available:</p>
+<ul>
+<li>onConnect (Execute when the bot connect to the channel)</li>
+<li>onMessage (Execute when a new message come in the channel)</li>
+<li>onPing (Execute when someone mention the bot (Ex: @YourBot))</li>
+<li>onPong (Execute every 5 minutes when Twitch send PING status)</li>
+<li>onUsernotice (Execute when user subscribe for example)</li>
+<li>onCommand (Execute when someone send a message with the command symbol, by default <code>!</code>)</li>
+</ul>
+<p>Each hook receive a <code>Message</code> class excerpt the <code>onCommand</code> hook, he receive <code>Command</code> class with arguments parser</p>
+<h1 id="how-to-create-modules-and-use-hooks-">How to create modules and use hooks ?</h1>
+<ol>
+<li>
+<p>Create a folder with the name of your module in <code>/modules</code> folder (Ex: <code>/modules/responder</code>)</p>
+</li>
+<li>
+<p>Create a PHP file named with the name of your module (Ex: <code>/modules/responder/Responder.php</code>)</p>
+</li>
+<li>
+<p>Define a class and use TwichtBot module trait like this:</p>
+</li>
+</ol>
+<pre><code class="language-php">&lt;?php
+
+/**
+ * Class Responder
+ */
+class Responder {
+
+    use \TwitchBot\Module {
+        \TwitchBot\Module::__construct as private moduleConstructor;
+    }
+
+    /**
+     * Responder constructor.
+     * @param array $infos
+     * @param \TwitchBot\IrcConnect $client
+     */
+    public function __construct(array $infos, $client)
+    {
+        $this-&gt;moduleConstructor($infos, $client);
+    }
+
+    /**
+     * @param \TwitchBot\Message $message
+     */
+    public function onPing($message)
+    {
+        $this-&gt;getClient()-&gt;sendMessage('You pinged me @' . $message-&gt;getUsername() . ' ?! What do you want ?');
+    }
+}
+</code></pre>
+<ol start="4">
+<li>
+<p>Develop your features using available hooks. The functions names are <code>onNameOfTheHook()</code> (Ex: <code>onPing($message)</code>)</p>
+</li>
+<li>
+<p>Create a file <code>info.json</code> containing this:</p>
+<pre><code>{
+  &quot;name&quot;: &quot;Responder&quot;,
+  &quot;description&quot;: &quot;This module make the bot reply when it's mentioned&quot;,
+  &quot;author&quot; : [&quot;Valentin Deville&quot;]
+}
+</code></pre>
+</li>
+<li>
+<p>Refer to the php class <code>\TwitchBot\Message</code> or <code>\TwitchBot\Command</code> (<code>/src/class/</code>) for information about given parameter sent on call</p>
+</li>
+<li>
+<p>Update autoload using this command: <code>composer dumpautoload</code> or <code>./launch.sh</code> and select <code>&quot;Dump autoload&quot;</code></p>
+</li>
+<li>
+<p>Start your bot using startup script <code>./launch.sh</code> or simply launching <code>php bot.php</code></p>
+</li>
+</ol>
+<h2 id="config-system">Config system</h2>
+<p>You can use your own config system like mysql storage but the framework already has a simple configuration system based on json file.</p>
+<ol>
+<li>
+<p>Create a file <code>config.json</code> in your module folder</p>
+</li>
+<li>
+<p>Respect json format and convention</p>
+</li>
+<li>
+<p>You can use <code>getConfig()</code> and <code>setConfig()</code> methods in your code to get and set config from your module</p>
+</li>
+</ol>
+<p>Example file <code>config.json</code>:</p>
+<pre><code>{
+	&quot;my_beautifull_config_variable&quot;: &quot;Super String&quot;
+}
+</code></pre>
+<p>In the module:</p>
+<pre><code class="language-php">    public function onPing($message)
+    {
+		$config_message = $this-&gt;getConfig('my_beautifull_config_variable');
+		this-&gt;getClient()-&gt;sendMessage($config_message);
+    }
+</code></pre>
+<h1 id="understand-roles">Understand roles</h1>
+<p>New roles system is available since version 1.4.</p>
+<p>You have static variable to define role in <code>Message</code> and are filled when the message is process by the core:</p>
+<pre><code class="language-php">    public static $ROLE_SUB = 'ROLE_SUB';
+
+    public static $ROLE_VIP = 'ROLE_VIP';
+
+    public static $ROLE_MOD = 'ROLE_MODERATOR';
+
+    public static $ROLE_OWNER = 'ROLE_OWNER';
+</code></pre>
+<p>All methods to check roles are located to <code>Utils</code> (<code>/src/class/Utils.php</code>)
+Shortcut methods in <code>Utils</code>:</p>
+<table>
+<thead>
+<tr><th>Method</th><th>Param 1</th><th>Param 2</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>hasRole()</td><td>String $toCheck Role to be check</td><td>Message $message The message instance</td><td>Return true or false if the given role is validate for this message</td></tr>
+<tr><td>hasOneOfRoles()</td><td>Array $toCheck An array of role to be check</td><td>Message $message The message instance</td><td>Return true if one of role checked is validate</td></tr>
+<tr><td>isViewer()</td><td>Message $message The message instance</td><td></td><td>Return true</td></tr>
+<tr><td>isSub()</td><td>Message $message The message instance</td><td></td><td>Return true if is SUB viewer</td></tr>
+<tr><td>isVip()</td><td>Message $message The message instance</td><td></td><td>Return true if is VIP viewer</td></tr>
+<tr><td>isMod()</td><td>Message $message The message instance</td><td></td><td>Return true if is moderator</td></tr>
+<tr><td>isOwner()</td><td>Message $message The message instance</td><td></td><td>Return true if is the streamer</td></tr>
+<tr><td>isMoreThanViewer()</td><td>Message $message The message instance</td><td></td><td>Return true if is not a simple viewer</td></tr>
+</tbody>
+</table>
+<p>Example of use:</p>
+<pre><code class="language-php">    public function onCommand($command)
+    {
+        switch ($command-&gt;getCommand()) {
+            case 'setnext':
+                (Utils::isOwner($command-&gt;getMessage())) ? $this-&gt;setNext($command) : false;
+                break;
+            case 'sethour':
+                (Utils::isOwner($command-&gt;getMessage())) ? $this-&gt;setNext($command) : false;
+                break;
+            case 'next':
+                $this-&gt;sendResponse($command);
+                break;
+            default:
+                break;
+        }
+    }
+</code></pre>
+<section>
+<small class="date text-muted"><i class="fa fa-calendar" aria-hidden="true"></i> Feb 10, 2019, 4:27:09 PM</small>
+</section>
+</article>
+</div>
+
+<footer>
+<p class="text-muted">
+Documentation theme created with <a href="https://skydocs.skyost.eu">SkyDocs</a>.
+</p>
+</footer>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jQuery.print/1.5.1/jQuery.print.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/is-in-viewport/3.0.3/isInViewport.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.3.2/tocbot.min.js"></script>
+<script type="text/javascript" src="../../assets/js/page.js"></script>
+<script type="text/javascript" src="../../assets/localization/en.js"></script>
+</body>
+</html>
